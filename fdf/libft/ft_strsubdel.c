@@ -1,28 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_tablen.c                                        :+:      :+:    :+:   */
+/*   ft_strsub.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ccharrie <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: aparabos <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/01/15 15:30:35 by ccharrie          #+#    #+#             */
-/*   Updated: 2018/03/05 14:14:54 by ccharrie         ###   ########.fr       */
+/*   Created: 2017/11/08 18:55:12 by aparabos          #+#    #+#             */
+/*   Updated: 2018/03/05 13:43:19 by ccharrie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-//#include <stdio.h>
 
-int		ft_tablen(char **tab)
+char	*ft_strsubdel(char *s, unsigned int start, size_t len)
 {
-	int	res;
+	char	*tmp;
+	size_t	i;
 
-	res = 0;
-	while (tab[res])
+	i = 0;
+	if (!s)
+		return (0);
+	if (!(tmp = (char *)ft_strnew(len)))
+		return (0);
+	while (s[start] && i < len && tmp != NULL)
 	{
-//		printf("c'est la case : %d\n", res);
-//		printf("%p\n", tab[res]);
-		res++;
+		tmp[i] = s[start];
+		i++;
+		start++;
 	}
-	return (res);
+	free(s);
+	return (tmp);
 }

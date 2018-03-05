@@ -6,21 +6,22 @@
 /*   By: ccharrie <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/05 12:16:04 by ccharrie          #+#    #+#             */
-/*   Updated: 2018/01/05 12:16:57 by ccharrie         ###   ########.fr       */
+/*   Updated: 2018/03/05 13:57:58 by ccharrie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	ft_del2dtab(char **tab)
+void	ft_del2dtab(char ***tab)
 {
 	int	i;
 
 	i = 0;
-	while (tab[i])
+	while ((*tab)[i])
 	{
-		free(tab[i]);
+		ft_strdel(&((*tab)[i]));
 		i++;
 	}
-	free(tab);
+	free(*tab);
+	*tab = NULL;
 }

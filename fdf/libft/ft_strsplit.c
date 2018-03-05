@@ -6,7 +6,7 @@
 /*   By: ccharrie <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/08 10:07:56 by ccharrie          #+#    #+#             */
-/*   Updated: 2017/11/10 10:17:22 by ccharrie         ###   ########.fr       */
+/*   Updated: 2018/02/28 15:04:39 by ccharrie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,11 +64,11 @@ char			**ft_strsplit(char const *str, char c)
 
 	cpt = 0;
 	if (!(str))
-		return (0);
+		return (NULL);
 	cpt = ft_cntwrds(str, c);
 	if (!(dest = (char **)malloc(sizeof(char *) * (cpt + 1))))
-		return (0);
+		return (NULL);
 	dest = ft_split(dest, str, c, cpt);
-	dest[cpt] = 0;
+	dest[cpt] = NULL;
 	return (dest);
 }

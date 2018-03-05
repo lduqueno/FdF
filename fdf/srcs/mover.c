@@ -1,28 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_tablen.c                                        :+:      :+:    :+:   */
+/*   mover.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ccharrie <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/01/15 15:30:35 by ccharrie          #+#    #+#             */
-/*   Updated: 2018/03/05 14:14:54 by ccharrie         ###   ########.fr       */
+/*   Created: 2018/02/19 15:16:32 by ccharrie          #+#    #+#             */
+/*   Updated: 2018/02/19 16:41:38 by ccharrie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-//#include <stdio.h>
+#include "fdf.h"
 
-int		ft_tablen(char **tab)
+void	left(t_mlx *mlx)
 {
-	int	res;
+		mlx->beginx -= 10;
+		ft_resetwin(mlx);
+}
 
-	res = 0;
-	while (tab[res])
+void	up(t_mlx *mlx)
+{
+	if (mlx->beginy > 310)
 	{
-//		printf("c'est la case : %d\n", res);
-//		printf("%p\n", tab[res]);
-		res++;
+		mlx->beginy -= 10;
+		ft_resetwin(mlx);
 	}
-	return (res);
+}
+
+void	down(t_mlx *mlx)
+{
+	mlx->beginy += 10;
+	ft_resetwin(mlx);
+}
+
+void	right(t_mlx *mlx)
+{
+	mlx->beginx += 10;
+	ft_resetwin(mlx);
 }

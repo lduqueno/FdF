@@ -6,7 +6,7 @@
 /*   By: ccharrie <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:39:26 by ccharrie          #+#    #+#             */
-/*   Updated: 2018/01/15 16:29:47 by ccharrie         ###   ########.fr       */
+/*   Updated: 2018/03/05 13:45:06 by ccharrie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,8 @@ typedef struct		s_list
 	struct s_list	*next;
 }					t_list;
 
+char				*ft_strsubdel(char *s, unsigned int start, size_t len);
+int					ft_tablenfree(char **tab);
 int					ft_tablen(char **tab);
 char				*ft_strjoinndels1(char *s1, char *s2);
 char				**ft_resizetab(char **tab, char *str);
@@ -65,7 +67,7 @@ void				ft_puttab(char **tab);
 char				**ft_splitwhitespaces(char const *s);
 int					get_next_line(const int fd, char **line);
 void				ft_del2tabs(char *s1, char *s2);
-void				ft_del2dtab(char **tab);
+void				ft_del2dtab(char ***tab);
 char				*ft_strjoinnfree(char *s1, char *s2);
 void				ft_putformat(char *str, char *color,
 						char *background, char *format);
