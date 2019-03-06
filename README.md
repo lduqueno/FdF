@@ -21,6 +21,10 @@ Now let's discover something more exciting: how to open a graphic window and dra
 To start your journey in the world of graphic programming, FdF proposes to represent the
 mesh in "wire of a field" in 3D.
 ```
+
+>Project made in collaboration with :
+>* Léo Duquenois [Lduqueno](https://github.com/lduqueno)
+
 ## author
 
 From the graphic 42 branch.
