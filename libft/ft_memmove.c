@@ -3,37 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memmove.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ccharrie <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: abechet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/11/07 14:30:43 by ccharrie          #+#    #+#             */
-/*   Updated: 2017/11/08 14:51:56 by ccharrie         ###   ########.fr       */
+/*   Created: 2018/11/09 10:25:14 by abechet           #+#    #+#             */
+/*   Updated: 2018/11/20 13:58:20 by abechet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	*ft_memmove(void *dst, const void *src, size_t n)
+void	*ft_memmove(void *dst, const void *src, size_t len)
 {
-	size_t	cpt;
-	char	tmp[n];
-	char	*tmp2;
-	char	*tmp3;
+	unsigned char		*d;
+	const unsigned char	*s;
 
-	cpt = 0;
-	tmp3 = (char *)src;
-	tmp2 = (char *)dst;
-	if (n > 100000000)
-		return (0);
-	while (cpt < n)
+	d = (unsigned char*)dst;
+	s = (const unsigned char*)src;
+	if (d < s)
 	{
-		tmp[cpt] = tmp3[cpt];
-		cpt++;
+		while (len--)
+			*d++ = *s++;
 	}
-	cpt = 0;
-	while (cpt < n)
-	{
-		tmp2[cpt] = tmp[cpt];
-		cpt++;
-	}
-	return (tmp2);
+	else
+		while (len--)
+			d[len] = s[len];
+	return (dst);
 }

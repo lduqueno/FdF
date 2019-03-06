@@ -3,81 +3,40 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ccharrie <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: abechet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/11/08 10:58:37 by ccharrie          #+#    #+#             */
-/*   Updated: 2017/11/09 17:36:24 by ccharrie         ###   ########.fr       */
+/*   Created: 2018/11/13 11:39:35 by abechet           #+#    #+#             */
+/*   Updated: 2018/11/20 13:56:18 by abechet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static char		*ft_spec(int n)
+char	*ft_itoa(int n)
 {
-	char	*str;
+	int		i;
+	int		b;
+	int		neg;
+	char	*tmp;
 
+	b = n;
 	if (n == -2147483648)
-	{
-		if (!(str = ft_strnew(13)))
-			return (NULL);
-		return (ft_strcpy(str, "-2147483648"));
-	}
-	else
-	{
-		if (!(str = ft_strnew(1)))
-			return (NULL);
-		return (ft_strcpy(str, "0"));
-	}
-}
-
-static int		cntdigit(int tmp)
-{
-	int	cpt;
-
-	cpt = 0;
-	while (tmp > 0)
-	{
-		cpt++;
-		tmp = tmp / 10;
-	}
-	return (cpt);
-}
-
-static char		*ft_res(int n, char *str, int cpt, int sign)
-{
-	str[cpt] = '\0';
-	while (n > 0)
-	{
-		str[cpt - sign - 1] = n % 10 + 48;
-		n = n / 10;
-		cpt--;
-	}
-	if (sign)
-		str[0] = '-';
-	return (str);
-}
-
-char			*ft_itoa(int n)
-{
-	char	*str;
-	int		cpt;
-	int		sign;
-	int		tmp;
-
-	cpt = 0;
-	sign = 0;
-	tmp = 0;
-	if (n == -2147483648 || n == 0)
-		return (ft_spec(n));
-	else if (n < 0)
-	{
-		sign = -1;
-		n = -n;
-	}
-	tmp = n;
-	cpt = cntdigit(tmp);
-	if (!(str = ft_strnew(cpt + 1)))
+		return (ft_strdup("-2147483648"));
+	i = (n == 0 ? 1 : 0);
+	neg = (n < 0 ? 1 : 0);
+	while (b != 0 && ++i)
+		b = b / 10;
+	if (!(tmp = (char *)malloc(sizeof(char) * (i + 1 + neg))))
 		return (NULL);
-	str = ft_res(n, str, cpt, sign);
-	return (str);
+	b = i;
+	if (neg == 1)
+		n = n * (-1);
+	while (i > 0)
+	{
+		tmp[(i-- + neg) - 1] = (n % 10) + '0';
+		n = n / 10;
+	}
+	(neg == 1 ? tmp[0] = '-' : 1);
+	tmp[b + neg] = '\0';
+	return (tmp);
 }

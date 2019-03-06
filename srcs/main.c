@@ -3,96 +3,98 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ccharrie <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ccharrie <ccharrie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/01/23 13:34:55 by ccharrie          #+#    #+#             */
-/*   Updated: 2018/03/05 18:57:50 by ccharrie         ###   ########.fr       */
+/*   Created: 2019/01/12 16:26:06 by ccharrie          #+#    #+#             */
+/*   Updated: 2019/03/04 15:03:44 by lduqueno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-t_mlx	*ft_getpixtab(t_mlx *mlx)
+static int		check_is_folder(const char *path)
 {
-	int		i;
-	int		x;
-	int		y;
+	struct stat buf;
 
-	if (!(mlx->pixtab = (t_pix *)malloc(sizeof(t_pix) * mlx->len)))
-		return (NULL);
-	printf("%p\n", &mlx->dp);
-	while(1);
-	i = 0;
-	y = 0;
-	while (i < mlx->len && y < mlx->ymax)
-	{
-		x = 0;
-		while (x < mlx->xmax)
-		{
-			mlx->pixtab[i].xi = ((x - y) * mlx->spacex) - mlx->res[y][x];
-			mlx->pixtab[i].yi = (x + y) * mlx->spacey / 2 - mlx->res[y][x];
-			mlx->pixtab[i].z = mlx->res[y][x];
-			x++;
-			i++;
-		}
-		y++;
-	}
-	return (mlx);
-}
-
-int		ft_getimage(t_mlx *mlx, char *file)
-{
-	int		i;
-
-	mlx = ft_getmap(mlx, file, mlx->dp);
-	mlx = ft_getpixtab(mlx);
-	i = 0;
-	while (i < mlx->len && i + 1 < mlx->len)
-	{
-		if ((i + 1) % mlx->xmax != 0)
-		{
-			mlx->pixtab[i].xf = mlx->pixtab[i + 1].xi;
-			mlx->pixtab[i].yf = mlx->pixtab[i + 1].yi;
-			ft_brestracing(mlx, i, mlx->beginx, mlx->beginy);
-		}
-		if ((i / mlx->xmax) <  mlx->ymax - 1)
-		{
-			mlx->pixtab[i].xf = mlx->pixtab[i + mlx->xmax].xi;
-			mlx->pixtab[i].yf = mlx->pixtab[i + mlx->xmax].yi;
-			ft_brestracing(mlx, i, mlx->beginx, mlx->beginy);
-		}
-		i++;
-	}
-	ft_tabintdel(mlx->res, mlx->ymax);
-	return (0);
-}
-
-int		main(int ac, char **av)
-{
-	t_mlx	*mlx;
-
-	if (!(mlx = (t_mlx *)malloc(sizeof(t_mlx))))
+	stat(path, &buf);
+	if (S_ISDIR(buf.st_mode))
+		return (1);
+	if (S_ISREG(buf.st_mode))
 		return (0);
-	mlx->spacex = 25;
-	mlx->spacey = 25;
-	mlx->beginx = 1000;
-	mlx->beginy = 500;
-	mlx->dp = 1;
-	if (ac == 2)
+	return (assert_error("FdF file "));
+}
+
+void			push_list(t_dlist **lst, char *name)
+{
+	t_dlist	*new;
+
+	if (!(new = (t_dlist *)malloc(sizeof(t_dlist))))
+		return ;
+	new->cnt = ft_strdup(name);
+	new->next = NULL;
+	new->prev = NULL;
+	ft_dlstpushback(lst, new);
+}
+
+static void		get_files(t_mlx_data **data)
+{
+	struct dirent	**folder;
+	int				i;
+	int				len;
+
+	folder = NULL;
+	(*data)->files = NULL;
+	i = -1;
+	len = scandir((*data)->path, &folder, NULL, alphasort);
+	while (++i < len)
+		if (folder[i]->d_type == DT_REG && ft_strstr(folder[i]->d_name, ".fdf"))
+			push_list(&(*data)->files, folder[i]->d_name);
+	while (len--)
+		free(folder[len]);
+	free(folder);
+}
+
+static int		menu_init(t_mlx_data **data)
+{
+	(*data)->cur_x = 25;
+	(*data)->cur_y = 250;
+	(*data)->txt_c = 0xFFFFFF;
+	(*data)->txt_fpl = -1;
+	(*data)->txt_y = 250;
+	(*data)->txt_x = 50;
+	(*data)->men_mode = 0;
+	(*data)->ispress = 0;
+	(*data)->men_f = NULL;
+	(*data)->men_m = ft_strdup("Choose a map");
+	get_files(data);
+	(*data)->cur_file = (*data)->files;
+	menu_header(data);
+	put_to_win(data);
+	return (1);
+}
+
+int				main(int ac, char **av)
+{
+	t_mlx_data	*data;
+
+	if (ac != 2)
 	{
-		mlx->file = ft_strdup(av[1]);
-		mlx->mlx_ptr = mlx_init();
-		mlx->win = mlx_new_window(mlx->mlx_ptr, WIN_WID, WIN_HEIG, mlx->file);
-		check_error(mlx->file);
-		ft_getimage(mlx, mlx->file);
-		setmenu(mlx);
-		mlx_hook(mlx->win, 2, 3, ft_getkey, mlx);
-		mlx_loop(mlx->mlx_ptr);
+		ft_putendl("fdf usage : ./fdf [file | folder]");
+		return (0);
 	}
-	else
-	{
-		free(mlx);
-		ft_putendl("Usage : ./fdf [mapfile.fdf]");
-	}
+	if (!(data = (t_mlx_data *)malloc(sizeof(t_mlx_data))))
+		return (assert_error("FdF malloc data "));
+	if (!(data->mlx_p = mlx_init()))
+		return (assert_error("Fdf mlx_init "));
+	data->path = ft_strdup(av[1]);
+	data->win_x = 1280;
+	data->win_y = 720;
+	data->win_p = mlx_new_window(data->mlx_p, data->win_x, data->win_y,
+		data->path);
+	print_help();
+	if (check_is_folder(av[1]) == 1)
+		menu_init(&data);
+	else if (check_is_folder(av[1]) == 0)
+		file_to_res(&data);
 	return (0);
 }

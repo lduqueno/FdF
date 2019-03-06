@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_atoi.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ccharrie <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: abechet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/11/09 12:18:59 by ccharrie          #+#    #+#             */
-/*   Updated: 2017/11/09 12:21:32 by ccharrie         ###   ########.fr       */
+/*   Created: 2018/11/08 12:07:01 by abechet           #+#    #+#             */
+/*   Updated: 2018/11/19 14:41:02 by abechet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,25 +14,24 @@
 
 int		ft_atoi(const char *str)
 {
-	int			i;
-	int			nb;
-	int			neg;
-	const char	*tmp;
+	int nb;
+	int neg;
 
-	i = 0;
 	nb = 0;
 	neg = 1;
-	tmp = str;
-	while ((tmp[i] <= '\r' && tmp[i] >= '\t') || tmp[i] == ' ')
-		i++;
-	if (tmp[i] == '-' && (tmp[i + 1] >= '0' && tmp[i + 1] <= '9'))
-		neg = -1;
-	if (tmp[i] == '-' || tmp[i] == '+')
-		i++;
-	while (tmp[i] >= '0' && tmp[i] <= '9')
+	while (ft_isspace(*str))
+		str++;
+	if (*str == '+' || *str == '-')
 	{
-		nb = nb * 10 + (tmp[i] - 48);
-		i++;
+		if (*str == '-')
+			neg = -1;
+		str++;
 	}
-	return (nb * neg);
+	while (ft_isdigit(*str) && *str != '\0')
+	{
+		nb = nb * 10;
+		nb = nb + (*str - '0');
+		str++;
+	}
+	return (neg * nb);
 }

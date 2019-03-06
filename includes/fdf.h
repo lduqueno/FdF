@@ -3,113 +3,89 @@
 /*                                                        :::      ::::::::   */
 /*   fdf.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ccharrie <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ccharrie <ccharrie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/01/15 11:40:03 by ccharrie          #+#    #+#             */
-/*   Updated: 2018/03/05 18:39:10 by ccharrie         ###   ########.fr       */
+/*   Created: 2019/02/15 04:43:54 by ccharrie          #+#    #+#             */
+/*   Updated: 2019/03/04 16:20:08 by lduqueno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FDF_H
 # define FDF_H
 
-# include "../libft/libft.h"
-# include <mlx.h>
+# include "libft.h"
+# include "ft_printf.h"
+# include "define.h"
+# include "menu.h"
 # include <math.h>
-#include<stdio.h>
+# include <mlx.h>
 
-# define WIN_WID 1820
-# define WIN_HEIG 1280
-
-# define checkmc0(x) if (!(x)) return (0)
-# define checkmcn(x) if (!(x)) return (NULL)
-
-typedef struct		s_var
+typedef struct	s_count
 {
-	char			*line;
-	int				fd;
-	int				i;
-	int				j;
-}					t_var;
-
-
-typedef struct	s_map
-{
-	int		xmax;
-	int		ymax;
-	int		len;
-	int		fd;
-	int		**res;
-}				t_map;
-
-typedef struct	s_pix
-{
-	int		xi;
-	int		yi;
-	int		xf;
-	int		yf;
-	int		dx;
-	int		dy;
-	int		z;
-	int		yinc;
-	int		xinc;
-}				t_pix;
+	struct s_count	*next;
+	int				number;
+	int				count;
+}				t_count;
 
 typedef struct	s_mlx
 {
-	int		xmax;
-	int		ymax;
-	int		len;
-	int		**res;
-	int		fd;
-	void	*mlx_ptr;
-	void	*win;
-	t_pix	*pixtab;
-	int		beginx;
-	int		beginy;
-	int		mbeginy;
-	int		mbeginx;
-	int		space;
-	int		spacex;
-	int		spacey;
-	int		zinc;
-	int		dp;
-	char	*file;
-}			t_mlx;
+	int				xmax;
+	int				ymax;
+	int				**map;
+	int				win_x;
+	int				win_y;
+	int				img_cl;
+	void			*mlx_p;
+	void			*win_p;
+	int				ispress;
+	void			*men_p;
+	void			*whe_p;
+	unsigned int	*whe_d;
+	int				szp;
+	int				men_w;
+	void			*img_p;
+	unsigned int	*img_d;
+	int				spacing;
+	int				pix_x;
+	int				pix_y;
+	int				proj;
+	int				depth;
+	float			theta_x;
+	float			theta_y;
+	float			theta_z;
+	int				z_base;
+	int				zmax;
+	int				zmin;
+}				t_mlx;
 
+typedef struct	s_point
+{
+	int				x;
+	int				y;
+	int				z;
+	int				raw_z;
+	int				dx;
+	int				dy;
+	int				xinc;
+	int				yinc;
+}				t_point;
 
-/*
-**		void functions
-*/
-
-void		ft_brestracing(t_mlx *mlx, int i, int beginx, int beginy);
-void		ft_resetwin(t_mlx *mlx);
-void		left(t_mlx *mlx);
-void		right(t_mlx *mlx);
-void		up(t_mlx *mlx);
-void		down(t_mlx *mlx);
-void		hup(t_mlx *mlx);
-void		hdown(t_mlx *mlx);
-void		wup(t_mlx *mlx);
-void		wdown(t_mlx *mlx);
-void		dupdn(t_mlx *mlx, int i);
-void		setmenu(t_mlx *mlx);
-void		ft_tabintdel(int **res, int len);
-void		ft_dofree(char **line, char ***tmp);
-void		get_map(t_mlx *mlx, char *av, int dp);
-
-/*
-**		integer functions
-*/
-
-int			ft_getimage(t_mlx *mlx, char *file);
-int			ft_getkey(int keycode, t_mlx *mlx);
-int			check_error(char *file);
-
-/*
- **		structures functions
- */
-
-t_mlx		*ft_getmap(t_mlx *mlx, char *file, int dp);
+int				assert_error(char *str);
+int				screen_reset(t_mlx **data);
+int				to_parser(char *file, t_mlx **data);
+int				to_file(char *file, t_mlx_data **data, char *res);
+int				press(int button, int x, int y, t_mlx **data);
+int				mouse(int x, int y, t_mlx **data);
+int				release(int button, int x, int y, t_mlx **data);
+void			print_header(t_mlx **data);
+int				keyboard_input(int keycode, t_mlx **data);
+void			draw_str_centered(t_mlx_data *mlx, int x, int y, char *s);
+int				draw_init(t_mlx **data);
+void			scale_view(t_mlx **data);
+void			handle_rotate(t_mlx **data, t_point *pnt);
+int				get_color(t_mlx **data, int z);
+void			print_help(void);
+void			coord_init(t_mlx **data, int i, t_point **point);
+void			retrieve_most_occurence(t_mlx **data);
 
 #endif

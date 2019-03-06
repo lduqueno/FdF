@@ -3,97 +3,68 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ccharrie <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: gjuste <gjuste@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/11/29 15:15:56 by ccharrie          #+#    #+#             */
-/*   Updated: 2018/01/06 17:20:10 by ccharrie         ###   ########.fr       */
+/*   Created: 2018/11/27 14:51:23 by gjuste            #+#    #+#             */
+/*   Updated: 2019/01/28 17:07:37 by gjuste           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	stock_the_end(char *str, size_t i)
+int		readline(int fd, char **str)
 {
-	int	j;
+	int		error;
+	char	buff[BUFF_SIZE + 1];
+	char	*tmp;
 
-	j = 0;
-	while (i < ft_strlen(str))
+	ft_bzero(buff, BUFF_SIZE + 1);
+	while ((error = read(fd, buff, BUFF_SIZE)) > 0)
 	{
-		str[j] = str[i + 1];
-		i++;
-		j++;
+		tmp = *str;
+		*str = ft_strjoin(*str, buff);
+		free(tmp);
+		ft_bzero(buff, BUFF_SIZE + 1);
+		if (ft_strchr(*str, '\n'))
+			break ;
 	}
-	str[j] = '\0';
+	return (error);
 }
 
-int		get_the_line(int ret, char **line, char *str)
+char	*gnl_to_line(char **str)
 {
-	size_t	i;
-	char	*res;
+	int				i;
+	char			*ret;
+	char			*tmp;
 
 	i = 0;
-	if (!(res = ft_strnew(ft_strlen(str))))
-		return (0);
-	if (ret != 0 || ft_strlen(str) != 0)
-	{
-		if (str[0] == '\n')
-			res[0] = '\0';
-		else
-		{
-			while (str[i] != '\n' && str[i])
-			{
-				res[i] = str[i];
-				i++;
-			}
-			res[i] = '\0';
-		}
-		*line = res;
-		stock_the_end(str, i);
-		return (1);
-	}
-	return (0);
+	while (*(*str + i) != '\n' && *(*str + i) != '\0')
+		i++;
+	ret = ft_strsub(*str, 0, i);
+	tmp = *str;
+	*str = ft_strsub(*str, i + 1, ft_strlen(*str) - i);
+	free(tmp);
+	return (ret);
 }
 
-char	*resizestr(char *str)
+int		get_next_line(const int fd, char **line)
 {
-	char *tmp;
+	static char		*str;
+	int				error;
 
-	if (!(tmp = ft_strnew(ft_strlen(str))))
-		return (NULL);
-	tmp = ft_strcpy(tmp, str);
-	free(str);
-	if (!(str = ft_strnew(ft_strlen(tmp) + BUFF_SIZE)))
-		return (NULL);
-	str = ft_strcpy(str, tmp);
-	free(tmp);
-	return (str);
-}
-
-int		get_next_line(int fd, char **line)
-{
-	static char	*str = NULL;
-	char		*tmp;
-	int			eol;
-	int			ret;
-
-	eol = 1;
-	if (fd < 0 || (!(line)))
+	if (fd < 0 || BUFF_SIZE <= 0)
 		return (-1);
-	if ((!(str)) && (!(str = ft_strnew(BUFF_SIZE))))
-		return (-1);
-	if (!(tmp = ft_strnew(BUFF_SIZE)))
-		return (-1);
-	while (eol == 1 && (ret = read(fd, tmp, BUFF_SIZE)) > 0)
+	if (!str)
+		str = ft_strnew(0);
+	if (ft_strchr(str, '\n') != NULL)
+		*line = gnl_to_line(&str);
+	else
 	{
-		str = resizestr(str);
-		str = ft_strncat(str, tmp, ret);
-		if (ft_strchr(tmp, '\n'))
-			eol = 0;
+		if ((error = readline(fd, &str)) == 0 && !*str)
+			return (0);
+		if (error == -1)
+			return (-1);
+		*line = gnl_to_line(&str);
 	}
-	free(tmp);
-	if (ret == -1)
-		return (-1);
-	if (get_the_line(ret, line, str) == 1)
-		return (1);
-	return (0);
+	return (1);
 }

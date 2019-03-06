@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strmap.c                                        :+:      :+:    :+:   */
+/*   ft_strmapi.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ccharrie <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: abechet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/11/07 20:09:13 by ccharrie          #+#    #+#             */
-/*   Updated: 2017/11/09 14:48:35 by ccharrie         ###   ########.fr       */
+/*   Created: 2018/11/09 12:13:13 by abechet           #+#    #+#             */
+/*   Updated: 2018/11/20 17:36:57 by abechet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,21 +14,18 @@
 
 char	*ft_strmapi(char const *s, char (*f)(unsigned int, char))
 {
-	char			*dest;
 	char			*tmp;
-	unsigned int	cpt;
+	unsigned int	i;
 
-	tmp = (char *)s;
-	cpt = 0;
-	if (!(s))
-		return (0);
-	if (!(dest = (char *)malloc(sizeof(char) * ft_strlen(tmp) + 1)))
-		return (0);
-	while (s[cpt])
+	if (s && f)
 	{
-		dest[cpt] = (*f)(cpt, tmp[cpt]);
-		cpt++;
+		if (!(tmp = (char *)malloc((sizeof(char) * ft_strlen(s) + 1))))
+			return (NULL);
+		i = -1;
+		while (s[++i])
+			tmp[i] = f(i, s[i]);
+		tmp[i] = '\0';
+		return (tmp);
 	}
-	dest[cpt] = '\0';
-	return (dest);
+	return (NULL);
 }

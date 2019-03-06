@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strtrim.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ccharrie <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: abechet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/11/08 09:49:18 by ccharrie          #+#    #+#             */
-/*   Updated: 2017/11/08 20:02:13 by ccharrie         ###   ########.fr       */
+/*   Created: 2018/11/12 11:30:40 by abechet           #+#    #+#             */
+/*   Updated: 2018/11/20 15:53:18 by abechet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,28 +14,28 @@
 
 char	*ft_strtrim(char const *s)
 {
-	unsigned int	cpt;
-	char			*dest;
-	size_t			len;
-	unsigned int	start;
+	int		i;
+	int		start;
+	int		end;
+	char	*tmp;
 
-	cpt = 0;
-	len = 0;
-	if (!(s))
-		return (0);
-	while (s[cpt] && (s[cpt] == ' ' || s[cpt] == '\n' || s[cpt] == '\t'))
-		cpt++;
-	start = cpt;
-	while (s[cpt])
-	{
-		if (s[cpt] != ' ' && s[cpt] != '\n' && s[cpt] != '\t')
-			len = cpt - start + 1;
-		cpt++;
-	}
-	if (len == 0 && start > 0)
-		return (ft_strdup("\0"));
-	if (!(dest = ft_strnew(len + 1)))
+	i = 0;
+	if (!s)
 		return (NULL);
-	dest = ft_strsub(s, start, len);
-	return (dest);
+	while (ft_isspace(s[i]))
+		i++;
+	start = i;
+	while (s[i + 1] != '\0')
+		i++;
+	while (ft_isspace(s[i]))
+		i--;
+	end = i;
+	i = end - start;
+	if (!(tmp = (char *)malloc(sizeof(char) * i + 2)))
+		return (NULL);
+	i = 0;
+	while (start <= end)
+		tmp[i++] = s[start++];
+	tmp[i] = '\0';
+	return (tmp);
 }
