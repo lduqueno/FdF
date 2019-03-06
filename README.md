@@ -1,8 +1,6 @@
 <h1 align=center>Graphic</h1>
 <h3>Graphical understanding programmation.</h3>
 
->I actually remake this project because it was never validated, some memory leaks was the main problem.
-
 <p align=center float="left">
     <a href="https://www.opengl.org/"><img src="https://upload.wikimedia.org/wikipedia/fr/thumb/2/21/OpenGL_logo.svg/1200px-OpenGL_logo.svg.png" height="200" width="auto"></a>
  </p>
