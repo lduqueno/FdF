@@ -6,7 +6,7 @@
 #    By: ccharrie <ccharrie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/12/10 12:16:23 by ccharrie          #+#    #+#              #
-#    Updated: 2019/03/04 15:36:17 by lduqueno         ###   ########.fr        #
+#    Updated: 2019/05/10 20:13:35 by ccharrie         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,7 +24,7 @@ NAME = fdf
 
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror
-MLX_FLAGS = -lmlx -framework OpenGL -framework AppKit
+MLX_FLAGS = -I /usr/X11/include -g -L /usr/X11/lib -lmlx -framework OpenGL -framework AppKit
 
 HEADER_PATH = includes
 
