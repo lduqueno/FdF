@@ -3,111 +3,87 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ccharrie <ccharrie@student.42.fr>          +#+  +:+       +#+         #
+#    By: rlegan <rlegan@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2018/12/10 12:16:23 by ccharrie          #+#    #+#              #
-#    Updated: 2019/05/10 20:13:35 by ccharrie         ###   ########.fr        #
+#    Created: 2018/09/13 16:35:11 by rlegan            #+#    #+#              #
+#    Updated: 2019/05/25 19:31:38 by lduqueno         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-.PHONY: all clean fclean re compile
+CC = gcc
 
-COLOR_GREEN = "\033[1;32;40m"
-COLOR_RED = "\033[1;31;40m"
-COLOR_YELLOW = "\033[1;33;40m"
-COLOR_BLUE = "\033[1;38;5;21m"
-COLOR_ORANGE = "\033[1;38;5;202m"
-COLOR_GRAY = "\033[1;38;5;244m"
-COLOR_RESET = "\033[0m"
+CFLAGS = -Wall -Werror -Wextra -O2
 
 NAME = fdf
 
-CC = gcc
-CFLAGS = -Wall -Wextra -Werror
-MLX_FLAGS = -I /usr/X11/include -g -L /usr/X11/lib -lmlx -framework OpenGL -framework AppKit
+HEADER = includes
 
-HEADER_PATH = includes
+MINILIBX_DIR = minilibx
 
-SRC_PATH = srcs
-SRC_NAME = main.c \
-		   parsing.c \
-		   file.c \
-		   get_res.c \
-		   menu.c \
-		   event.c \
-		   header.c \
-		   input.c \
-		   event_catch.c \
-		   draw.c \
-		   coord.c\
-		   rotate.c \
-		   color.c \
-		   help.c \
-		   reset.c
-
-SRC = $(addprefix $(SRC_PATH)/,$(SRC_NAME))
-
-OBJ_PATH = objs
-OBJ_NAME = $(SRC_NAME:.c=.o)
-OBJ = $(addprefix $(OBJ_PATH)/,$(OBJ_NAME))
-
-LIBFT_PATH = libft
-LIBFT_INCLUDE = -I$(LIBFT_PATH)
-LIBFT = -L$(LIBFT_PATH) -lft
+MLX_FLAGS = -L $(MINILIBX_DIR) -l mlx -framework OpenGL -framework AppKit
 
 LIBFTPRINTF_PATH = libft/ft_printf
-LIBFTPRINTF_INCLUDE = -I$(LIBFTPRINTF_PATH)/includes
-LIBFTPRINTF = -L$(LIBFTPRINTF_PATH) -lftprintf
+LIBFTPRINTF_INCLUDE = $(LIBFTPRINTF_PATH)/includes
+LIBFTPRINTF = -L$(LIBFTPRINTF_PATH)
 
-all: compile
+SRC_DIR = srcs
 
-$(OBJ_PATH)/%.o: $(SRC_PATH)/%.c
-	$(CC) -c -o $@ $(CFLAGS) $< $(LIBFT_INCLUDE) $(LIBFTPRINTF_INCLUDE) -I$(HEADER_PATH)
+SRC_FILES = main.c \
+		parsing.c \
+		file.c \
+		get_res.c \
+		menu.c \
+		event.c \
+		header.c \
+		input.c \
+		event_catch.c \
+		draw.c \
+		coord.c\
+		rotate.c \
+		color.c \
+		help.c \
+		reset.c
 
-$(NAME): $(OBJ)
-	@echo $(COLOR_YELLOW)"Linking "$@"..."$(COLOR_RESET)
-	@echo $(COLOR_GRAY)
-	$(CC) $^ $(MLX_FLAGS) $(LIBFTPRINTF) $(LIBFT) -o $@
-	@echo $(COLOR_RESET)
-	@echo $(COLOR_GREEN)$(NAME)" successfully created."$(COLOR_RESET)
+LIBFT_DIR = libft
 
-$(OBJ_PATH):
-	@mkdir -p $(OBJ_PATH)
+OBJS_DIR = objs
+OBJS_FILES = $(SRC_FILES:.c=.o)
+SRCS = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
+OBJS = $(addprefix $(OBJS_DIR)/, $(OBJS_FILES))
 
-compile: $(OBJ_PATH)
-	@echo $(COLOR_BLUE)"==Entering "$(LIBFT_PATH)"=="$(COLOR_RESET)
-	@echo $(COLOR_GRAY)
-	@make -C $(LIBFT_PATH)
-	@echo $(COLOR_RESET)
-	@echo $(COLOR_BLUE)"==Exiting "$(LIBFTPRINTF_PATH)"=="$(COLOR_RESET)
-	@echo $(COLOR_BLUE)"==Entering "$(LIBFTPRINTF_PATH)"=="$(COLOR_RESET)
-	@echo $(COLOR_GRAY)
+.PHONY: all clean fclean re
+
+all: $(NAME)
+
+$(NAME): $(OBJS_DIR) $(OBJS)
+	@echo "\n\033[0;33mCompiling final project.. \033[0;32mSuccess!\033m\017"
+	$(CC) $(CFLAGS) $(MLX_FLAGS) -o $(NAME) $(LIBFTPRINTF_PATH)/libftprintf.a $(LIBFT_DIR)/libft.a $(MINILIBX_DIR)/libmlx.a $(OBJS)
+	@echo "\033[0;31m------------- [ \033[0;36mEVERYTHING IS OK \033[0;31m] -----------\033m\017\033[0m"
+
+$(OBJS_DIR):
+	@echo "\033[0;31m------ [ \033[0;35m$(NAME) by lduqueno and ccharrie \033[0;31m] ------"
+	@echo "\033[0;33mLinking MLX..\033[0m"
+	@make -C $(MINILIBX_DIR) 2> /dev/null
+	@echo "\033[0;33mLinking Libft..\033[0m"
+	@make -C $(LIBFT_DIR)
 	@make -C $(LIBFTPRINTF_PATH)
-	@echo $(COLOR_RESET)
-	@echo $(COLOR_BLUE)"==Exiting "$(LIBFTPRINTF_PATH)"=="$(COLOR_RESET)
-	@echo $(COLOR_YELLOW)"Compiling "$(NAME)"..."$(COLOR_RESET)
-	@echo $(COLOR_GRAY)
-	@make $(NAME)
-	@echo $(COLOR_RESET)
+	@echo "\033[0;32mSuccess!\n\033[0m"
+	@mkdir $(OBJS_DIR)
+
+$(OBJS_DIR)/%.o:$(SRC_DIR)/%.c
+	$(CC) $(CFLAGS) -o $@ -c $< -I $(HEADER) -I $(LIBFTPRINTF_INCLUDE) -I $(LIBFT_DIR) -I $(MINILIBX_DIR)
+	@echo "\033[0;33mCompiling $<.. \033[0;32mSuccess!\033m\017"
 
 clean:
-	@echo $(COLOR_RED)"Removing "$(OBJ_PATH)"..."$(COLOR_RESET)
-	rm -Rf $(OBJ_PATH)
-	@echo  $(COLOR_BLUE)"==Entering "$(LIBFT_PATH)"=="$(COLOR_RESET)
-	@make -C $(LIBFT_PATH) clean
-	@echo  $(COLOR_BLUE)"==Exiting "$(LIBFT_PATH)"=="$(COLOR_RESET)
-	@echo  $(COLOR_BLUE)"==Entering "$(LIBFTPRINTF_PATH)"=="$(COLOR_RESET)
+	@rm -f $(OBJS)
+	@rm -rf $(OBJS_DIR)
+	@make -C $(LIBFT_DIR) clean
+	@make -C $(MINILIBX_DIR) clean
 	@make -C $(LIBFTPRINTF_PATH) clean
-	@echo  $(COLOR_BLUE)"==Exiting "$(LIBFTPRINTF_PATH)"=="$(COLOR_RESET)
 
 fclean: clean
-	@echo $(COLOR_RED)"Removing "$(NAME)"..."$(COLOR_RESET)
-	rm -f $(NAME)
-	@echo  $(COLOR_BLUE)"==Entering "$(LIBFT_PATH)"=="$(COLOR_RESET)
-	@make -C $(LIBFT_PATH) fclean
-	@echo  $(COLOR_BLUE)"==Exiting "$(LIBFT_PATH)"=="$(COLOR_RESET)
-	@echo  $(COLOR_BLUE)"==Entering "$(LIBFTPRINTF_PATH)"=="$(COLOR_RESET)
-	@make -C $(LIBFTPRINTF_PATH) fclean
-	@echo  $(COLOR_ORANGE)"==Exiting "$(LIBFTPRINTF_PATH)"=="$(COLOR_RESET)
+	make -C $(LIBFT_DIR) fclean
+	make -C $(LIBFTPRINTF_PATH) fclean
+	@rm -f $(NAME)
 
 re: fclean all
